@@ -3,9 +3,18 @@ import { fetchDualRoute } from '../api/smartcity';
 
 const S = {
   input: {
-    width: '100%', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--border)',
-    color: 'var(--text-primary)', padding: '7px 10px', fontFamily: 'var(--font-mono)',
-    fontSize: '0.7rem', boxSizing: 'border-box', outline: 'none',
+    input: {
+  width: '100%',
+  minWidth: 0,
+  background: 'rgba(0,0,0,0.5)',
+  border: '1px solid var(--border)',
+  color: 'var(--text-primary)',
+  padding: '7px 10px',
+  fontFamily: 'var(--font-mono)',
+  fontSize: '0.7rem',
+  boxSizing: 'border-box',
+  outline: 'none',
+},
   },
   label: { fontSize: '0.56rem', color: 'var(--text-secondary)', letterSpacing: '0.15em', marginBottom: '3px' },
   stat: {
@@ -136,8 +145,7 @@ export default function SafeRoutePanel({ onRouteComputed }) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontFamily: 'var(--font-mono)' }}>
-      {/* Source */}
+<div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontFamily: 'var(--font-mono)', width: '100%', maxWidth: '100%', overflowX: 'hidden' }}>      {/* Source */}
       <div>
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '5px' }}>
           <span style={S.label}>START POINT</span>
@@ -147,8 +155,8 @@ export default function SafeRoutePanel({ onRouteComputed }) {
           </label>
         </div>
         {useGPS ? (
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <div style={{ ...S.input, flex: 1, display: 'flex', alignItems: 'center', color: gpsName ? 'var(--accent)' : 'var(--text-secondary)' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div style={{ ...S.input, flex: 1, display: 'flex', alignItems: 'center', color: gpsName ? 'var(--accent)' : 'var(--text-secondary)' }}>
               {gpsLoading ? '📡 Acquiring GPS...' : gpsName ? `📍 ${gpsName}` : '📍 Press GET →'}
             </div>
             <button onClick={getGPS} disabled={gpsLoading}
