@@ -9,7 +9,9 @@ import os
 
 # Add the current directory to Python path so backend_python can be imported
 current_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, current_dir)
+backend_dir = os.path.join(current_dir, "backend_python")
+
+sys.path.insert(0, backend_dir)
 
 # Now import and run the app
 from backend_python.main import app
