@@ -1,4 +1,4 @@
-# 🌆 SmartCity — AI-Powered Women's Safety Platform
+# 🌆 Civora AI-Powered Smart Urban Safety & Emergency Response Platform
 
 > **Hackathon Submission** | IIT Delhi × TigerGraph  
 > A real-time, graph-powered urban-safety platform for Chandigarh that combines AI inference, live CCTV crowd analysis, incident NLP, and multi-role dashboards.

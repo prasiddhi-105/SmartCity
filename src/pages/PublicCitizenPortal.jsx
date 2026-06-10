@@ -116,11 +116,24 @@ export default function PublicCitizenPortal() {
         </div>
       </header>
 
-      <div style={{ flex: 1, display: 'flex', gap: '0', overflow: 'hidden' }}>
+          <div style={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
+            gap: '0',
+            overflowX: 'auto'
+          }}>
 
         {/* Left panel */}
-        <div style={{ width: '360px', flexShrink: 0, display: 'flex', flexDirection: 'column', borderRight: '1px solid var(--border)', background: 'var(--bg-panel)', overflow: 'hidden' }}>
-
+<div style={{
+  width: '100%',
+  maxWidth: '100%',
+  flexShrink: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  borderRight: '1px solid var(--border)',
+  background: 'var(--bg-panel)'
+}}>
           {/* Tab bar */}
           <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
             {[['sos', '🚨 SOS'], ['route', '🗺 ROUTE'], ['report', '📋 REPORT']].map(([key, label]) => (
