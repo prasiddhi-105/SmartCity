@@ -1,20 +1,18 @@
-# backend_python/services/clustering_service.py
 """
 Spatial clustering of incidents and danger zones.
-Uses a simple grid-based approach for hackathon scope.
-For production: replace with DBSCAN via scikit-learn.
+Uses DBSCAN via scikit-learn with Haversine distance for production accuracy.
 """
 
 import math
 import logging
 from typing import List, Dict, Any
+import numpy as np
+from sklearn.cluster import DBSCAN
 from custom_db.tigergraph_client import get_all_zones
 
 logger = logging.getLogger(__name__)
 
-
 SEVERITY_RANK = {"critical": 4, "high": 3, "medium": 2, "low": 1}
-
 
 async def compute_clusters(
     min_size: int = 2,
@@ -22,31 +20,40 @@ async def compute_clusters(
     hours: int = 24
 ) -> List[Dict[str, Any]]:
     """
-    Groups zones into spatial clusters using a simple neighbor-merge algorithm.
-
-    For production: replace with:
-      from sklearn.cluster import DBSCAN
-      import numpy as np
-      coords = np.array([(z['lat'], z['lng']) for z in zones])
-      labels = DBSCAN(eps=radius_km/111, min_samples=min_size).fit_predict(coords)
+    Groups zones into spatial clusters using DBSCAN with a Haversine metric.
+    Maintains the exact same input parameters and output JSON structure.
     """
     zones = await get_all_zones(limit=10000)
+    if not zones:
+        return []
 
-    # Simple grid-cell clustering
-    cell_size = radius_km / 111.0  # degrees per km
-    cells: Dict[str, List[dict]] = {}
+    # 1. Extract coordinates and convert them to radians for Haversine
+    coords = np.array([[z["lat"], z["lng"]] for z in zones])
+    coords_rad = np.radians(coords)
 
-    for zone in zones:
-        cell_lat = math.floor(zone["lat"] / cell_size)
-        cell_lng = math.floor(zone["lng"] / cell_size)
-        cell_key = f"{cell_lat}_{cell_lng}"
-        cells.setdefault(cell_key, []).append(zone)
+    # Earth's radius in kilometers is roughly 6371.008
+    # eps needs to be in radians (radius_km / earth_radius)
+    kms_per_radian = 6371.008
+    epsilon_rad = radius_km / kms_per_radian
+
+    # 2. Run DBSCAN
+    # metric='haversine' expects [lat, lng] in radians if passed this way,
+    # or [lng, lat] depending on setup. Because we use standard pairs,
+    # it treats index 0 as lat and index 1 as lng consistently.
+    db = DBSCAN(eps=epsilon_rad, min_samples=min_size, metric='haversine')
+    labels = db.fit_predict(coords_rad)
+
+    # 3. Group zones into their respective clusters based on labels
+    cluster_groups: Dict[int, List[dict]] = {}
+    for zone, label in zip(zones, labels):
+        if label == -1:
+            continue  # Noise point, skip it
+        cluster_groups.setdefault(label, []).append(zone)
 
     clusters = []
-    for idx, (cell_key, cell_zones) in enumerate(cells.items()):
-        if len(cell_zones) < min_size:
-            continue
-
+    
+    # 4. Aggregate data for each cluster
+    for idx, (label, cell_zones) in enumerate(cluster_groups.items()):
         center_lat = sum(z["lat"] for z in cell_zones) / len(cell_zones)
         center_lng = sum(z["lng"] for z in cell_zones) / len(cell_zones)
         avg_danger = sum(z["danger_score"] for z in cell_zones) / len(cell_zones)
@@ -66,7 +73,7 @@ async def compute_clusters(
 
         dominant = max(severity_counts, key=lambda k: severity_counts[k])
 
-        # Danger level
+        # Danger level text translation
         if avg_danger < 0.25:
             level = "safe"
         elif avg_danger < 0.50:
@@ -76,6 +83,7 @@ async def compute_clusters(
         else:
             level = "critical"
 
+        # Construct the payload matching the original signature contract
         clusters.append({
             "cluster_id": f"cluster_{idx}",
             "center_lat": round(center_lat, 6),
@@ -89,6 +97,6 @@ async def compute_clusters(
             "zone_ids": [z["zone_id"] for z in cell_zones]
         })
 
-    # Sort by danger descending
+    # Sort by danger descending so most unsafe zones bubble to the top
     clusters.sort(key=lambda c: c["avg_danger_score"], reverse=True)
     return clusters
