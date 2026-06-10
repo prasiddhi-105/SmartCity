@@ -63,24 +63,23 @@ def analyze_frame(
     }
     """
     bundle = bundle or get_cv_bundle()
+    status = bundle.get("status", "unknown")
 
     try:
-        print("DEBUG → image_bytes type:", type(image_bytes))
-        print("DEBUG → image_bytes length:", len(image_bytes))
-        
+        logger.debug("Processing frame payload. Size: %d bytes", len(image_bytes))
         raw = bundle["predict_fn"](image_bytes)
     except Exception as exc:
-        logger.error("CV predict_fn raised: %s", exc, exc_info=True)
-        return _error_result(str(exc), bundle["status"])
+        logger.error("CV predict_fn raised an exception: %s", exc, exc_info=True)
+        return _error_result(str(exc), status)
 
-    extra       = raw.get("extra", {})
+    extra = raw.get("extra", {})
     density_str = extra.get("crowd_density", raw.get("prediction", "LOW")).upper()
-    person_count    = int(extra.get("person_count", 0))
+    person_count = int(extra.get("person_count", 0))
     anomaly_detected = bool(extra.get("anomaly_detected", False))
-    anomalies       = extra.get("anomalies", [])
-    safety_score    = int(extra.get("safety_score", 75))
-    inference_ms    = float(extra.get("inference_ms", 0.0))
-    confidence      = float(raw.get("confidence", 0.72))
+    anomalies = extra.get("anomalies", [])
+    safety_score = int(extra.get("safety_score", 75))
+    inference_ms = float(extra.get("inference_ms", 0.0))
+    confidence = float(raw.get("confidence", 0.72))
 
     # Density-based danger (discrete)
     density_danger = _DENSITY_DANGER.get(density_str, 0.10)
@@ -92,21 +91,22 @@ def analyze_frame(
 
     # Cross-validate against safety_score from the pipeline (0-100, higher=safer)
     score_danger = normalize_score(100.0 - safety_score, 0.0, 100.0)
+    
     # Weighted blend: 60% pipeline safety score, 40% density signal
     danger_score = clamp(0.60 * score_danger + 0.40 * raw_danger)
 
     return {
-        "person_count":     person_count,
-        "crowd_density":    density_str,
-        "density_danger":   round(density_danger, 4),
+        "person_count": person_count,
+        "crowd_density": density_str,
+        "density_danger": round(density_danger, 4),
         "anomaly_detected": anomaly_detected,
-        "anomalies":        anomalies,
-        "safety_score":     safety_score,
-        "danger_score":     round(danger_score, 4),
-        "danger_level":     score_to_level(danger_score),
-        "confidence":       round(confidence, 4),
-        "inference_ms":     inference_ms,
-        "loader_status":    bundle["status"],
+        "anomalies": anomalies,
+        "safety_score": safety_score,
+        "danger_score": round(danger_score, 4),
+        "danger_level": score_to_level(danger_score),
+        "confidence": round(confidence, 4),
+        "inference_ms": inference_ms,
+        "loader_status": status,
     }
 
 
@@ -117,10 +117,13 @@ def reset_pipeline() -> None:
     """
     bundle = get_cv_bundle()
     try:
-        bundle["reset_fn"]()
-        logger.info("CV pipeline state reset.")
+        if "reset_fn" in bundle:
+            bundle["reset_fn"]()
+            logger.info("CV pipeline state reset successfully.")
+        else:
+            logger.warning("CV bundle missing 'reset_fn' hook.")
     except Exception as exc:
-        logger.warning("CV reset_fn raised: %s", exc)
+        logger.warning("CV reset_fn raised an exception: %s", exc)
 
 
 def get_cv_danger_score(image_bytes: bytes) -> float:
@@ -132,7 +135,7 @@ def get_cv_danger_score(image_bytes: bytes) -> float:
     try:
         return analyze_frame(image_bytes)["danger_score"]
     except Exception as exc:
-        logger.warning("get_cv_danger_score failed: %s — returning 0.5", exc)
+        logger.warning("get_cv_danger_score failed: %s — falling back to 0.5", exc)
         return 0.5
 
 
@@ -140,16 +143,16 @@ def get_cv_danger_score(image_bytes: bytes) -> float:
 
 def _error_result(reason: str, status: str) -> dict[str, Any]:
     return {
-        "person_count":     0,
-        "crowd_density":    "LOW",
-        "density_danger":   0.0,
+        "person_count": 0,
+        "crowd_density": "LOW",
+        "density_danger": 0.0,
         "anomaly_detected": False,
-        "anomalies":        [],
-        "safety_score":     50,
-        "danger_score":     0.5,
-        "danger_level":     "moderate",
-        "confidence":       0.0,
-        "inference_ms":     0.0,
-        "loader_status":    status,
-        "error":            reason,
+        "anomalies": [],
+        "safety_score": 50,
+        "danger_score": 0.5,
+        "danger_level": "moderate",
+        "confidence": 0.0,
+        "inference_ms": 0.0,
+        "loader_status": status,
+        "error": reason,
     }
