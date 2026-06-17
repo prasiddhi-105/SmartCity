@@ -299,6 +299,17 @@ Full interactive docs: `http://localhost:8000/docs`
 | **AI — NLP** | HuggingFace Transformers, scikit-learn, SciPy |
 | **Maps** | OpenStreetMap tiles via Leaflet |
 
+## 🧩 Tech Stack
+
+| Layer | Technologies |
+|---|---|
+| **Frontend** | ![React](https://img.shields.io/badge/React_19-%2320232a.svg?style=flat-square&logo=react&logoColor=%2361DAFB) ![Vite](https://img.shields.io/badge/Vite_8-%23646CFF.svg?style=flat-square&logo=vite&logoColor=white) ![Leaflet](https://img.shields.io/badge/Leaflet-%23B9E12B.svg?style=flat-square&logo=leaflet&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-%2338B2AC.svg?style=flat-square&logo=tailwind-css&logoColor=white) <br> ![Recharts](https://img.shields.io/badge/Recharts-%2322B5BF.svg?style=flat-square) |
+| **Backend** | ![FastAPI](https://img.shields.io/badge/FastAPI_0.115-%23009688.svg?style=flat-square&logo=FastAPI&logoColor=white) <br> ![Pydantic](https://img.shields.io/badge/Pydantic_v2-%23E92063.svg?style=flat-square&logo=pydantic&logoColor=white) <br> `python-jose (JWT)` <br> ![Uvicorn](https://img.shields.io/badge/Uvicorn-%23444444.svg?style=flat-square) |
+| **Graph DB** | ![TigerGraph](https://img.shields.io/badge/TigerGraph_Cloud-%23FF6B00.svg?style=flat-square) -`UrbanSafetyGraph` <br> ![pyTigerGraph](https://img.shields.io/badge/pyTigerGraph_1.6-%23FF6B00.svg?style=flat-square&logo=python&logoColor=white) |
+| **AI — LSTM** | ![TensorFlow](https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=flat-square&logo=TensorFlow&logoColor=white) ![Keras](https://img.shields.io/badge/Keras-%23D00000.svg?style=flat-square&logo=Keras&logoColor=white) ![scikit-learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=flat-square&logo=scikit-learn&logoColor=white) ![NumPy](https://img.shields.io/badge/NumPy-%23013243.svg?style=flat-square&logo=NumPy&logoColor=white) |
+| **AI — CV** | ![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=flat-square&logo=PyTorch&logoColor=white) ![YOLOv8](https://img.shields.io/badge/YOLOv8-%23002F6C.svg?style=flat-square) <br> ![MobileNetV2](https://img.shields.io/badge/MobileNetV2-%234285F4.svg?style=flat-square) ![Pillow](https://img.shields.io/badge/Pillow-%23121212.svg?style=flat-square) |
+| **AI — NLP** | ![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97_HuggingFace-%23FFD21E.svg?style=flat-square) <br> ![scikit-learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=flat-square&logo=scikit-learn&logoColor=white) `(scaler)` <br> ![SciPy](https://img.shields.io/badge/SciPy-%238CAAE6.svg?style=flat-square&logo=SciPy&logoColor=white) |
+| **Maps** | ![OpenStreetMap](https://img.shields.io/badge/OpenStreetMap-%237EBC6F.svg?style=flat-square&logo=OpenStreetMap&logoColor=white) `tiles via Leaflet` |
 ---
 
 ## 📜 License
