@@ -45,7 +45,16 @@ export default function Dashboard() {
   const [fastestGeo, setFastestGeo]   = React.useState(null);
   const [balancedGeo, setBalancedGeo] = React.useState(null);
   const [userPos, setUserPos]         = React.useState(null);
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth < 900);
 
+  React.useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 900);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const handleRouteComputed = React.useCallback((routeData, src) => {
     const sg = routeData?.safest_route?.route_geojson;
     const fg = routeData?.fastest_route?.route_geojson || routeData?.shortest_route?.route_geojson;
@@ -77,9 +86,22 @@ export default function Dashboard() {
     switch (activeTab) {
       case 'SONAR':
         return (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gridTemplateRows: 'auto auto', gap: '1rem', height: '100%' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 300px',
+              gridTemplateRows: isMobile ? 'auto auto auto' : 'auto auto',
+              gap: '1rem',
+              height: '100%',
+            }}
+          >
             {/* Main map */}
-            <div style={{ gridRow: '1 / 3', minHeight: 420 }}>
+            <div
+              style={{
+                gridRow: isMobile ? 'auto' : '1 / 3',
+                minHeight: 420,
+              }}
+            >
               <Explorer
                 intersections={intersections}
                 incidents={incidents}
