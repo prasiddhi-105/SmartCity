@@ -126,7 +126,7 @@ export default function Sidebar({ activeTab, onTabChange, threatCount = 0 }) {
       }}>
         <div className="label-xs" style={{ lineHeight: 1.8 }}>
           <div>SECTOR: CBD-01</div>
-          <div>NODE: BANGALORE</div>
+          <div>NODE: {(import.meta.env.VITE_CITY_NAME || 'CHANDIGARH').toUpperCase()}</div>
           <div style={{ color: 'var(--accent)' }}>STATUS: <span className="blink">ACTIVE</span></div>
         </div>
       </div>
