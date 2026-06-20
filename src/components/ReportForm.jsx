@@ -205,24 +205,30 @@ export default function ReportForm() {
       )}
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', flex: 1 }}>
-        {/* Coordinates */}
+       {/* Coordinates */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
           <div>
             <div className="label-xs" style={{ marginBottom: 3 }}>LATITUDE</div>
-            <input type="number" step="any" required placeholder="12.9716"
+            <input type="number" step="any" placeholder="12.9716"
+              min="-90" max="90"
               value={form.lat} onChange={e => set('lat', e.target.value)}
               className="sub-input"
             />
           </div>
           <div>
             <div className="label-xs" style={{ marginBottom: 3 }}>LONGITUDE</div>
-            <input type="number" step="any" required placeholder="77.5946"
+            <input type="number" step="any" placeholder="77.5946"
+              min="-180" max="180"
               value={form.lng} onChange={e => set('lng', e.target.value)}
               className="sub-input"
             />
           </div>
         </div>
+=======HEAD
 
+=======
+        
+======= a63f7bf (fix: make latitude and longitude optional fields in dispatch console (#30))
         {/* Type */}
         <div>
           <div className="label-xs" style={{ marginBottom: 3 }}>INCIDENT TYPE</div>
