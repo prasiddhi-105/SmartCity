@@ -232,6 +232,7 @@ export default function ReportForm() {
           <div>
             <div className="label-xs" style={{ marginBottom: 3 }}>LATITUDE</div>
             <input type="number" step="any" required placeholder="12.9716"
+              min="-90" max="90"
               value={form.lat} onChange={e => set('lat', e.target.value)}
               className="sub-input"
             />
@@ -239,12 +240,12 @@ export default function ReportForm() {
           <div>
             <div className="label-xs" style={{ marginBottom: 3 }}>LONGITUDE</div>
             <input type="number" step="any" required placeholder="77.5946"
+              min="-180" max="180"
               value={form.lng} onChange={e => set('lng', e.target.value)}
               className="sub-input"
             />
           </div>
         </div>
-
         {/* Type */}
         <div>
           <div className="label-xs" style={{ marginBottom: 3 }}>INCIDENT TYPE</div>
